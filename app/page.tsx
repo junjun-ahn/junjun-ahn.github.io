@@ -1,44 +1,10 @@
-// "use client";
-
-// import { Canvas, useLoader } from "@react-three/fiber"; // useLoader 추가
-// import { OrbitControls, Stage } from "@react-three/drei";
-// import { Suspense } from "react";
-// import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js"; // 직접 로더 가져오기
-
-// function RobotModel() {
-//   // useOBJ 대신 useLoader를 사용합니다.
-//   const obj = useLoader(OBJLoader, "/models/000.obj"); 
-  
-//   return <primitive object={obj} scale={0.5} />;
-// }
-
-// export default function Home() {
-//   return (
-//     <main style={{ width: "100vw", height: "100vh", backgroundColor: "#050505" }}>
-//       <div style={{ position: "absolute", top: "40px", left: "40px", zIndex: 1, color: "#fff" }}>
-//         <h1 style={{ fontSize: "2rem", letterSpacing: "-1px" }}>Sejun-ahn's Page</h1>
-//         <p style={{ color: "#0070f3" }}>Good to see you</p>
-//       </div>
-
-//       <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 5], fov: 45 }}>
-//         <Suspense fallback={null}>
-//           <Stage environment="city" intensity={0.6}>
-//             <RobotModel />
-//           </Stage>
-//         </Suspense>
-//         <OrbitControls makeDefault />
-//       </Canvas>
-
-//       <div style={{ position: "absolute", bottom: "40px", width: "100%", textAlign: "center", color: "#444" }}>
-//         USE MOUSE TO ROTATE AND ZOOM
-//       </div>
-//     </main>
-//   );
-// }
-
 "use client";
 import Image from "next/image";
+import { publications } from "./types"
+
 export default function Home() {
+  const sortedPublications = [...publications].sort((a, b) => b.date.getTime() - a.date.getTime());
+
   return (
     <main className="min-h-screen bg-white text-black px-8 py-16 max-w-4xl mx-auto font-sans">
       {/* 1. Introduction */}
@@ -59,7 +25,7 @@ export default function Home() {
           <h1 className="text-4xl font-bold mb-4 tracking-tight">안세준 (Sejun Ahn)</h1>
           <p className="text-lg text-gray-700 leading-relaxed mb-6 max-w-2xl">
             안녕하세요, 저는 **[현재 소속]**에서 **[전공 분야]**를 연구하고 있는 안세준입니다. 
-            주로 [관심 연구 주제]에 관심을 가지고 있으며, 데이터 기반의 의사결정과 기술적 해결책을 찾는 과정을 즐깁니다.
+            주로 [관심 연구 주제]에 관심을 가지고 있으며, 즐깁니다
           </p>
           <div className="flex flex-wrap gap-4 text-blue-600 font-medium">
             <a href="mailto:your-email@example.com" className="hover:underline">Email</a>
@@ -74,9 +40,9 @@ export default function Home() {
       <section className="mb-16">
         <h2 className="text-2xl font-bold mb-6 border-b pb-2">Research Interests</h2>
         <ul className="list-disc list-inside space-y-2 text-gray-800">
-          <li><strong>Keyword 1:</strong> 구체적인 연구 분야 설명 (예: Medical Imaging Analysis)</li>
-          <li><strong>Keyword 2:</strong> 구체적인 연구 분야 설명 (예: Robustness in Deep Learning)</li>
-          <li><strong>Keyword 3:</strong> 구체적인 연구 분야 설명</li>
+          <li><strong>Keyword 1:</strong> Neural</li>
+          <li><strong>Keyword 2:</strong> Interaction</li>
+          <li><strong>Keyword 3:</strong> Localization</li>
         </ul>
       </section>
 
@@ -84,20 +50,40 @@ export default function Home() {
       <section className="mb-16">
         <h2 className="text-2xl font-bold mb-6 border-b pb-2">Publications</h2>
         <div className="space-y-6">
-          <div className="group">
-            <span className="text-sm font-mono text-gray-500">[Conference Name 2024]</span>
-            <p className="text-md mt-1">
-              <strong>Paper Title: Your Amazing Research Result</strong>
-            </p>
-            <p className="text-sm text-gray-600">
-              <strong>Sejun Ahn</strong>, Co-author 1, Co-author 2
-            </p>
-            <div className="mt-2 flex gap-2 text-xs">
-              <span className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">[PDF]</span>
-              <span className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">[Code]</span>
+          {sortedPublications.map((pub, index) => (
+            <div key={index} className="group">
+              <span className="text-sm font-mono text-gray-500">[{pub.venue}]</span>
+              <p className="text-md mt-1">
+                <strong>{pub.title}</strong>
+              </p>
+              <p className="text-sm text-gray-600">
+                {pub.authors.map((author, i) => (
+                  <span key={i}>
+                    {/* 본인 이름일 때만 <strong> 적용 */}
+                    {author === "Sejun Ahn" ? <strong>{author}</strong> : author}
+                    {i < pub.authors.length - 1 ? ', ' : ''}
+                  </span>
+                ))}
+              </p>
+              <div className="mt-2 flex gap-2 text-xs">
+                {pub.pdf && (
+                  <a href={pub.pdf} target="_blank" rel="noopener noreferrer" className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
+                    [PDF]
+                  </a>
+                )}
+                {pub.code && (
+                  <a href={pub.code} target="_blank" rel="noopener noreferrer" className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
+                    [Code]
+                  </a>
+                )}
+                {pub.project_page && (
+                  <a href={pub.project_page} target="_blank" rel="noopener noreferrer" className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
+                    [Project Page]
+                  </a>
+                )}
+              </div>
             </div>
-          </div>
-          {/* 추가 논문은 위 구조 반복 */}
+          ))}
         </div>
       </section>
 
